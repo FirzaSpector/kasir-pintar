@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kasir Pintar - Point of Sale (POS)</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Ionicons for beautiful UI icons -->
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    
+    <!-- Link local CSS stylesheet -->
+    <link rel="stylesheet" href="./resources/css/index.css">
+    
+    <style>
+        /* Custom spacing adjustments for single-page preview switching */
+        .dashboard-section, .pos-section, .history-section {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Custom loading spinner for checkout processing */
+        .loading-spinner {
+            border: 2.5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 2.5px solid #ffffff;
+            width: 16px;
+            height: 16px;
+            animation: spin 0.8s linear infinite;
+            display: inline-block;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="light-mode">
+    <div class="app-container">
+        <!-- Sidebar Kiri -->
+        <aside class="app-sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-logo">
+                    <ion-icon name="wallet"></ion-icon>
+                </div>
+                <div class="brand-text">
+                    <h2>KasirPintar</h2>
+                    <span>Point of Sale</span>
+                </div>
+            </div>
+            
+            <nav class="sidebar-menu">
+                <a href="#" class="menu-item" id="menu-dashboard">
+                    <ion-icon name="grid-outline"></ion-icon>
+                    <span>Ringkasan</span>
+                </a>
+                <a href="#" class="menu-item" id="menu-cashier">
+                    <ion-icon name="calculator-outline"></ion-icon>
+                    <span>Kasir Utama</span>
+                </a>
+                <a href="#" class="menu-item" id="menu-transactions">
+                    <ion-icon name="receipt-outline"></ion-icon>
+                    <span>Riwayat Transaksi</span>
+                </a>
+                <a href="#" class="menu-item" id="menu-products">
+                    <ion-icon name="fast-food-outline"></ion-icon>
+                    <span>Manajemen Produk</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-user">
+                <div class="user-avatar">SA</div>
+                <div class="user-info">
+                    <h4>Siti Aminah</h4>
+                    <span>Kasir Shif Pagi</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Konten Utama -->
+        <main class="app-main">
+            <!-- Topbar / Header -->
+            <header class="app-header">
+                <div class="header-left">
+                    <h1 id="header-view-title">Ringkasan Laporan</h1>
+                    <p class="header-subtitle" id="header-view-subtitle">Selamat datang kembali! Berikut ringkasan penjualan usaha Anda hari ini.</p>
+                </div>
+                <div class="header-right">
+                    <div class="header-date">
+                        <ion-icon name="calendar-outline"></ion-icon>
+                        <span id="live-date">Sabtu, 21 Mei 2026</span>
+                    </div>
+                    <div class="header-status">
+                        <span class="status-indicator online"></span>
+                        <span>Sistem Online</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Container Konten -->
+            <div class="main-content">
+                
+                <!-- VIEW 1: Dashboard Laporan -->
+                <section class="dashboard-section">
+                    <div class="dashboard-grid">
+                        <!-- Baris 1: Kartu Metrik Utama -->
+                        <div class="metrics-row">
+                            <!-- Pendapatan -->
+                            <div class="metric-card">
+                                <div class="metric-card-header">
+                                    <span>PENDAPATAN HARI INI</span>
+                                    <div class="metric-icon success">
+                                        <ion-icon name="trending-up-outline"></ion-icon>
+                                    </div>
+                                </div>
+                                <div class="metric-card-body">
+                                    <h2>Rp 168.000</h2>
+                                    <span class="trend up">
+                                        <ion-icon name="arrow-up-outline"></ion-icon>
+                                        12.5% dari kemarin
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Jumlah Transaksi -->
+                            <div class="metric-card">
+                                <div class="metric-card-header">
+                                    <span>TRANSAKSI HARI INI</span>
+                                    <div class="metric-icon primary">
+                                        <ion-icon name="receipt-outline"></ion-icon>
+                                    </div>
+                                </div>
+                                <div class="metric-card-body">
+                                    <h2>3 Transaksi</h2>
+                                    <span class="trend up">
+                                        <ion-icon name="arrow-up-outline"></ion-icon>
+                                        5% dari jam yang sama
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Stok Menipis Warning -->
+                            <div class="metric-card">
+                                <div class="metric-card-header">
+                                    <span>STOK MENIPIS (&lt; 10)</span>
+                                    <div class="metric-icon warning">
+                                        <ion-icon name="alert-circle-outline"></ion-icon>
+                                    </div>
+                                </div>
+                                <div class="metric-card-body">
+                                    <h2>3 Produk</h2>
+                                    <span class="trend down">
+                                        <ion-icon name="warning-outline"></ion-icon>
+                                        Membutuhkan restock segera
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Baris 2: Grafik & Riwayat Transaksi -->
+                        <div class="dashboard-details-row">
+                            <!-- Grafik Penjualan (Pure SVG Bento Box) -->
+                            <div class="details-card chart-container-card">
+                                <div class="card-header">
+                                    <h3>Tren Penjualan Pekan Ini</h3>
+                                    <span>Mei 2026</span>
+                                </div>
+                                <div class="card-body chart-body">
+                                    <div class="svg-chart-wrapper">
+                                        <svg viewBox="0 0 500 200" class="custom-svg-chart">
+                                            <defs>
+                                                <linearGradient id="chart-grad" x1="0" y1="0" x2="0" y2="1">
+                                                    <stop offset="0%" stop-color="#10b981" stop-opacity="0.3"/>
+                                                    <stop offset="100%" stop-color="#10b981" stop-opacity="0"/>
+                                                </linearGradient>
+                                            </defs>
+                                            <!-- Grid Lines -->
+                                            <line x1="0" y1="40" x2="500" y2="40" stroke="#f1f5f9" stroke-width="1" />
+                                            <line x1="0" y1="90" x2="500" y2="90" stroke="#f1f5f9" stroke-width="1" />
+                                            <line x1="0" y1="140" x2="500" y2="140" stroke="#f1f5f9" stroke-width="1" />
+                                            <line x1="0" y1="190" x2="500" y2="190" stroke="#e2e8f0" stroke-width="2" />
+                                            
+                                            <!-- Area Fill -->
+                                            <path d="M 0,180 Q 70,120 140,140 T 280,70 T 420,110 L 500,80 L 500,190 Z" fill="url(#chart-grad)" />
+                                            <!-- Line Plot -->
+                                            <path d="M 0,180 Q 70,120 140,140 T 280,70 T 420,110 L 500,80" fill="none" stroke="#10b981" stroke-width="4" stroke-linecap="round" />
+                                            
+                                            <!-- Data Points -->
+                                            <circle cx="140" cy="140" r="6" fill="#10b981" stroke="#ffffff" stroke-width="2" />
+                                            <circle cx="280" cy="70" r="6" fill="#10b981" stroke="#ffffff" stroke-width="2" />
+                                            <circle cx="420" cy="110" r="6" fill="#10b981" stroke="#ffffff" stroke-width="2" />
+                                        </svg>
+                                    </div>
+                                    <!-- X-Axis Labels -->
+                                    <div class="chart-labels">
+                                        <span>Sen</span>
+                                        <span>Sel</span>
+                                        <span>Rab</span>
+                                        <span>Kam</span>
+                                        <span>Jum</span>
+                                        <span>Sab</span>
+                                        <span>Min</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Daftar Peringatan Stok Menipis -->
+                            <div class="details-card warning-list-card">
+                                <div class="card-header">
+                                    <h3>Peringatan Stok Menipis</h3>
+                                    <span class="warning-count">3 Terdeteksi</span>
+                                </div>
+                                <div class="card-body">
+                                    <!-- Terisi via Javascript -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Baris 3: Aktivitas Transaksi Terbaru -->
+                        <div class="dashboard-full-row">
+                            <div class="details-card">
+                                <div class="card-header">
+                                    <h3>Aktivitas Transaksi Terbaru</h3>
+                                    <button class="btn btn-outline btn-small" onclick="document.getElementById('menu-transactions').click()">Lihat Semua</button>
+                                </div>
+                                <div class="card-body table-responsive">
+                                    <table class="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>No Invoice</th>
+                                                <th>Waktu</th>
+                                                <th>Kasir</th>
+                                                <th>Metode Bayar</th>
+                                                <th>Total Tagihan</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <!-- Terisi via Javascript -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW 2: Kasir Utama POS Terminal -->
+                <section class="pos-section">
+                    <div class="pos-layout">
+                        <!-- Panel Kiri: Catalog Produk -->
+                        <div class="pos-products-section">
+                            <!-- Pencarian & Filter Kategori -->
+                            <div class="filter-bar">
+                                <div class="search-box-container" style="display: flex; align-items: center; gap: 8px; width: 100%;">
+                                    <div class="input-with-icon" style="position: relative; flex: 1; display: flex; align-items: center;">
+                                        <ion-icon name="search-outline" style="position: absolute; left: 16px; color: #64748b; font-size: 20px;"></ion-icon>
+                                        <input type="text" id="product-search" placeholder="Cari nama, SKU, atau scan barcode langsung..." style="padding-left: 48px; width: 100%;">
+                                    </div>
+                                    <button class="btn-barcode-scan-trigger" onclick="window.openBarcodeCameraModal()" title="Pindai Barcode via Kamera" style="display: flex; align-items: center; justify-content: center; width: 46px; height: 46px; border-radius: 12px; background: rgba(99, 102, 241, 0.15); border: 1px solid rgba(99, 102, 241, 0.3); color: #818cf8; cursor: pointer; transition: all 0.2s ease;">
+                                        <ion-icon name="barcode-outline" style="font-size: 24px;"></ion-icon>
+                                    </button>
+                                </div>
+                                
+                                <div class="category-filters">
+                                    <button class="category-btn active" data-category="all">Semua</button>
+                                    <button class="category-btn" data-category="minuman-segar">Minuman Segar</button>
+                                    <button class="category-btn" data-category="makanan-ringan-camilan">Makanan Ringan (Camilan)</button>
+                                    <button class="category-btn" data-category="makanan-instan">Makanan Instan</button>
+                                    <button class="category-btn" data-category="bahan-pokok-sembako">Bahan Pokok & Sembako</button>
+                                    <button class="category-btn" data-category="produk-olahan-susu-roti">Olahan Susu & Roti</button>
+                                    <button class="category-btn" data-category="perawatan-rambut-tubuh">Rambut & Tubuh</button>
+                                    <button class="category-btn" data-category="perawatan-wajah-kulit">Wajah & Kulit</button>
+                                    <button class="category-btn" data-category="kebutuhan-sanitasi">Sanitasi</button>
+                                    <button class="category-btn" data-category="wewangian">Wewangian</button>
+                                    <button class="category-btn" data-category="pencuci-pakaian">Pencuci Pakaian</button>
+                                    <button class="category-btn" data-category="pembersih-rumah">Pembersih Rumah</button>
+                                    <button class="category-btn" data-category="pengendali-hama">Pengendali Hama</button>
+                                    <button class="category-btn" data-category="kebutuhan-bayi">Kebutuhan Bayi</button>
+                                    <button class="category-btn" data-category="produk-kesehatan-ringan">Kesehatan</button>
+                                    <button class="category-btn" data-category="kebutuhan-imbuhan">Kebutuhan Imbuhan</button>
+                                </div>
+                            </div>
+
+                            <!-- Grid Catalog Produk -->
+                            <div class="products-grid" id="products-container">
+                                <!-- Kartu produk dirender secara dinamis oleh javascript -->
+                            </div>
+                        </div>
+
+                        <!-- Panel Kanan: Keranjang Belanja -->
+                        <div class="pos-cart-section">
+                            <div class="cart-card">
+                                <div class="cart-header">
+                                    <ion-icon name="cart-outline"></ion-icon>
+                                    <h2>Keranjang Belanja</h2>
+                                    <span class="cart-count-pill" id="cart-total-qty">0 Item</span>
+                                </div>
+
+                                <!-- List Item Keranjang -->
+                                <div class="cart-items-list" id="cart-items-container">
+                                    <!-- State Kosong -->
+                                    <div class="cart-empty-state" id="cart-empty-msg">
+                                        <ion-icon name="basket-outline"></ion-icon>
+                                        <h3>Keranjang masih kosong</h3>
+                                        <p>Klik pada produk di sebelah kiri untuk menambahkan ke keranjang belanja.</p>
+                                    </div>
+                                </div>
+
+                                <!-- Ringkasan Harga -->
+                                <div class="cart-totals-section">
+                                    <div class="total-row">
+                                        <span>Subtotal</span>
+                                        <span id="cart-subtotal">Rp 0</span>
+                                    </div>
+                                    <div class="total-row" style="display: none;">
+                                        <span>Pajak (PPN 11%)</span>
+                                        <span id="cart-tax">Rp 0</span>
+                                    </div>
+                                    <div class="total-row grand-total">
+                                        <span>Total Belanja</span>
+                                        <span id="cart-grandtotal">Rp 0</span>
+                                    </div>
+                                </div>
+
+                                <!-- Tombol Transaksi -->
+                                <div class="cart-actions">
+                                    <button class="btn btn-danger btn-outline" id="clear-cart-btn">
+                                        <ion-icon name="trash-outline"></ion-icon>
+                                        <span>Batal</span>
+                                    </button>
+                                    <button class="btn btn-success" id="checkout-btn" disabled>
+                                        <ion-icon name="checkmark-circle-outline"></ion-icon>
+                                        <span>Bayar Sekarang</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW 3: Riwayat Transaksi -->
+                <section class="history-section">
+                    <!-- Kartu Ringkasan Metrik Laporan -->
+                    <div class="metrics-row" style="margin-bottom: 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                        <div class="metric-card" style="padding: 16px;">
+                            <div class="metric-card-header" style="font-size: 11px;">
+                                <span>OMZET TERFILTER</span>
+                                <div class="metric-icon success" style="width: 28px; height: 28px; font-size: 14px;">
+                                    <ion-icon name="cash-outline"></ion-icon>
+                                </div>
+                            </div>
+                            <div class="metric-card-body" style="margin-top: 8px;">
+                                <h3 id="report-total-revenue" style="font-size: 20px; font-weight: 800;">Rp 0</h3>
+                            </div>
+                        </div>
+                        <div class="metric-card" style="padding: 16px;">
+                            <div class="metric-card-header" style="font-size: 11px;">
+                                <span>TOTAL TRANSAKSI</span>
+                                <div class="metric-icon primary" style="width: 28px; height: 28px; font-size: 14px;">
+                                    <ion-icon name="receipt-outline"></ion-icon>
+                                </div>
+                            </div>
+                            <div class="metric-card-body" style="margin-top: 8px;">
+                                <h3 id="report-total-count" style="font-size: 20px; font-weight: 800;">0 Struk</h3>
+                            </div>
+                        </div>
+                        <div class="metric-card" style="padding: 16px;">
+                            <div class="metric-card-header" style="font-size: 11px;">
+                                <span>RATA-RATA TRANSAKSI</span>
+                                <div class="metric-icon warning" style="width: 28px; height: 28px; font-size: 14px;">
+                                    <ion-icon name="calculator-outline"></ion-icon>
+                                </div>
+                            </div>
+                            <div class="metric-card-body" style="margin-top: 8px;">
+                                <h3 id="report-avg-amount" style="font-size: 20px; font-weight: 800;">Rp 0</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-full-row">
+                        <div class="details-card">
+                            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+                                <h3>Daftar Transaksi Kasir</h3>
+                                <button class="btn btn-outline" id="btn-export-report" style="font-size: 12px; padding: 10px 16px;">
+                                    <ion-icon name="download-outline"></ion-icon>
+                                    <span>Ekspor Laporan</span>
+                                </button>
+                            </div>
+                            
+                            <!-- Bilah Filter Laporan Lanjutan -->
+                            <div class="filter-bar" style="padding: 16px 24px; border-bottom: 1px solid var(--border-color); background-color: #fafbfc; display: flex; flex-wrap: wrap; gap: 16px; align-items: center;">
+                                <div class="search-box-container" style="max-width: 250px; flex-grow: 1;">
+                                    <ion-icon name="search-outline"></ion-icon>
+                                    <input type="text" id="trx-search" placeholder="Cari invoice...">
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <span style="font-size: 12px; font-weight: 700; color: var(--text-secondary);">Periode:</span>
+                                    <select id="report-period-filter" style="padding: 10px 14px; border: 1px solid var(--border-color); border-radius: var(--radius-md); font-size: 13px; font-weight: 600; background-color: white; color: var(--text-primary);">
+                                        <option value="semua">Semua Waktu</option>
+                                        <option value="hari-ini" selected>Hari Ini</option>
+                                        <option value="kemarin">Kemarin</option>
+                                        <option value="pekan-ini">Pekan Ini</option>
+                                        <option value="bulan-ini">Bulan Ini</option>
+                                    </select>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <span style="font-size: 12px; font-weight: 700; color: var(--text-secondary);">Metode Bayar:</span>
+                                    <select id="report-payment-filter" style="padding: 10px 14px; border: 1px solid var(--border-color); border-radius: var(--radius-md); font-size: 13px; font-weight: 600; background-color: white; color: var(--text-primary);">
+                                        <option value="semua">Semua Metode</option>
+                                        <option value="Tunai">Tunai</option>
+                                        <option value="Debit / Kredit">Debit / Kredit</option>
+                                        <option value="QRIS Mandiri">QRIS Mandiri</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="card-body table-responsive">
+                                <div class="cart-empty-state" id="trx-empty-state" style="display: none;">
+                                    <ion-icon name="receipt-outline"></ion-icon>
+                                    <h3>Belum ada transaksi terfilter</h3>
+                                    <p>Tidak ada transaksi yang cocok dengan kriteria saringan di atas.</p>
+                                </div>
+                                <table class="data-table" id="transactions-table">
+                                    <thead>
+                                        <tr>
+                                            <th>No Invoice</th>
+                                            <th>Tanggal & Waktu</th>
+                                            <th>Kasir</th>
+                                            <th>Metode Bayar</th>
+                                            <th>Total Tagihan</th>
+                                            <th>Jumlah Bayar</th>
+                                            <th>Kembalian</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Terisi via Javascript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW 4: Manajemen Produk CRUD -->
+                <section class="products-crud-section" style="display: none; animation: fadeIn 0.3s ease-in-out;">
+                    <div class="dashboard-full-row">
+                        <div class="details-card">
+                            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+                                <h3>Daftar Persediaan Produk</h3>
+                                <button class="btn btn-success" id="btn-tambah-produk-preview">
+                                    <ion-icon name="add-circle-outline"></ion-icon>
+                                    <span>Tambah Produk Baru</span>
+                                </button>
+                            </div>
+                            
+                            <!-- Bilah Filter Produk CRUD -->
+                            <div class="filter-bar" style="padding: 16px 24px; border-bottom: 1px solid var(--border-color); background-color: #fafbfc; display: flex; flex-wrap: wrap; gap: 16px; align-items: center;">
+                                <div class="search-box-container" style="max-width: 300px; flex-grow: 1;">
+                                    <ion-icon name="search-outline"></ion-icon>
+                                    <input type="text" id="crud-product-search" placeholder="Cari nama produk atau SKU...">
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <span style="font-size: 12px; font-weight: 700; color: var(--text-secondary);">Kategori:</span>
+                                    <select id="crud-category-filter" style="padding: 10px 14px; border: 1px solid var(--border-color); border-radius: var(--radius-md); font-size: 13px; font-weight: 600; background-color: white; color: var(--text-primary);">
+                                        <option value="all">Semua Kategori</option>
+                                        <option value="minuman-segar">Minuman Segar</option>
+                                        <option value="makanan-ringan-camilan">Makanan Ringan (Camilan)</option>
+                                        <option value="makanan-instan">Makanan Instan</option>
+                                        <option value="bahan-pokok-sembako">Bahan Pokok & Sembako</option>
+                                        <option value="produk-olahan-susu-roti">Olahan Susu & Roti</option>
+                                        <option value="perawatan-rambut-tubuh">Rambut & Tubuh</option>
+                                        <option value="perawatan-wajah-kulit">Wajah & Kulit</option>
+                                        <option value="kebutuhan-sanitasi">Sanitasi</option>
+                                        <option value="wewangian">Wewangian</option>
+                                        <option value="pencuci-pakaian">Pencuci Pakaian</option>
+                                        <option value="pembersih-rumah">Pembersih Rumah</option>
+                                        <option value="pengendali-hama">Pengendali Hama</option>
+                                        <option value="kebutuhan-bayi">Kebutuhan Bayi</option>
+                                        <option value="produk-kesehatan-ringan">Kesehatan</option>
+                                        <option value="kebutuhan-imbuhan">Kebutuhan Imbuhan</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="card-body table-responsive">
+                                <div class="cart-empty-state" id="crud-empty-state" style="display: none;">
+                                    <ion-icon name="fast-food-outline"></ion-icon>
+                                    <h3>Katalog Produk Kosong</h3>
+                                    <p>Tidak ada produk yang sesuai dengan pencarian Anda.</p>
+                                </div>
+                                <table class="data-table" id="crud-products-table">
+                                    <thead>
+                                        <tr>
+                                            <th>SKU</th>
+                                            <th>Nama Produk</th>
+                                            <th>Kategori</th>
+                                            <th>Harga Jual</th>
+                                            <th>Stok Fisik</th>
+                                            <th>Status</th>
+                                            <th>Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Terisi via Javascript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL 1: Modal Pembayaran (Glassmorphic Slide-up) -->
+    <div class="modal-overlay" id="checkout-modal">
+        <div class="payment-modal">
+            <div class="modal-header">
+                <h3>Penyelesaian Pembayaran</h3>
+                <button class="close-modal-btn" id="close-payment-modal">
+                    <ion-icon name="close-outline"></ion-icon>
+                </button>
+            </div>
+            
+            <div class="payment-body">
+                <div class="payment-summary-box">
+                    <span>TOTAL TAGIHAN</span>
+                    <h1 id="modal-bill-amount">Rp 0</h1>
+                </div>
+
+                <div class="payment-grid">
+                    <!-- Pilihan Metode Pembayaran -->
+                    <div class="payment-methods-section">
+                        <h4>Metode Pembayaran</h4>
+                        <div class="method-toggles">
+                            <button class="method-btn active" data-method="tunai">
+                                <ion-icon name="cash-outline"></ion-icon>
+                                <span>Uang Tunai</span>
+                            </button>
+                            <button class="method-btn" data-method="kartu">
+                                <ion-icon name="card-outline"></ion-icon>
+                                <span>Debit / Kredit</span>
+                            </button>
+                            <button class="method-btn" data-method="qris">
+                                <ion-icon name="qr-code-outline"></ion-icon>
+                                <span>QRIS Mandiri</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Input Nominal Tunai & Numpad -->
+                    <div class="cash-input-section" id="cash-payment-fields">
+                        <h4>Jumlah Bayar (Tunai)</h4>
+                        <div class="cash-input-wrapper">
+                            <span class="rp-prefix">Rp</span>
+                            <input type="number" id="cash-paid-input" placeholder="0" readonly>
+                        </div>
+                        
+                        <!-- Quick Cash Buttons -->
+                        <div class="quick-cash-buttons">
+                            <button class="quick-cash-btn" data-amount="10000">Rp 10k</button>
+                            <button class="quick-cash-btn" data-amount="20000">Rp 20k</button>
+                            <button class="quick-cash-btn" data-amount="50000">Rp 50k</button>
+                            <button class="quick-cash-btn" data-amount="100000">Rp 100k</button>
+                            <button class="quick-cash-btn" id="exact-cash-btn">Uang Pas</button>
+                        </div>
+
+                        <!-- Numpad -->
+                        <div class="numpad-grid">
+                            <button class="numpad-btn" data-val="1">1</button>
+                            <button class="numpad-btn" data-val="2">2</button>
+                            <button class="numpad-btn" data-val="3">3</button>
+                            <button class="numpad-btn" data-val="4">4</button>
+                            <button class="numpad-btn" data-val="5">5</button>
+                            <button class="numpad-btn" data-val="6">6</button>
+                            <button class="numpad-btn" data-val="7">7</button>
+                            <button class="numpad-btn" data-val="8">8</button>
+                            <button class="numpad-btn" data-val="9">9</button>
+                            <button class="numpad-btn" data-val="000">000</button>
+                            <button class="numpad-btn" data-val="0">0</button>
+                            <button class="numpad-btn numpad-clear" id="numpad-backspace">
+                                <ion-icon name="backspace-outline"></ion-icon>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kembalian Info -->
+                <div class="change-summary-box" id="change-summary-box">
+                    <span class="change-label">KEMBALIAN</span>
+                    <h2 id="modal-change-amount">Rp 0</h2>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="cancel-checkout-btn">Batalkan</button>
+                <button class="btn btn-success btn-large" id="process-checkout-btn" disabled>
+                    <ion-icon name="print-outline"></ion-icon>
+                    <span>Proses Transaksi & Cetak</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: Modal Struk / Printer Simulator -->
+    <div class="modal-overlay" id="receipt-modal">
+        <div class="receipt-paper">
+            <div class="receipt-header">
+                <h3>KASIR PINTAR SWALAYAN</h3>
+                <p>Jalan Pemuda No. 45, Jakarta</p>
+                <p>Telp: (021) 8882-1920</p>
+                <div class="dashed-line"></div>
+            </div>
+
+            <div class="receipt-details">
+                <p><strong>No Invoice:</strong> <span id="receipt-invoice">TRX-20260521-X9A2</span></p>
+                <p><strong>Kasir:</strong> <span id="receipt-cashier">Siti Aminah</span></p>
+                <p><strong>Waktu:</strong> <span id="receipt-time">21/05/2026 12:45</span></p>
+                <div class="dashed-line"></div>
+            </div>
+
+            <div class="receipt-items" id="receipt-items-list">
+                <!-- Disimulasikan via Javascript -->
+            </div>
+
+            <div class="dashed-line"></div>
+
+            <div class="receipt-summary">
+                <div class="receipt-row">
+                    <span>Subtotal</span>
+                    <span id="receipt-subtotal">Rp 0</span>
+                </div>
+                <div class="receipt-row" style="display: none;">
+                    <span>Pajak (PPN 11%)</span>
+                    <span id="receipt-tax">Rp 0</span>
+                </div>
+                <div class="receipt-row bold">
+                    <span>TOTAL AKHIR</span>
+                    <span id="receipt-total">Rp 0</span>
+                </div>
+                <div class="dashed-line"></div>
+                <div class="receipt-row">
+                    <span>Metode Bayar</span>
+                    <span id="receipt-method">Tunai</span>
+                </div>
+                <div class="receipt-row">
+                    <span>Bayar</span>
+                    <span id="receipt-paid">Rp 0</span>
+                </div>
+                <div class="receipt-row">
+                    <span>Kembali</span>
+                    <span id="receipt-change">Rp 0</span>
+                </div>
+            </div>
+
+            <div class="receipt-footer">
+                <div class="dashed-line"></div>
+                <p>Terima Kasih Atas Kunjungan Anda</p>
+                <p>Powered by KasirPintar POS</p>
+                
+                <button class="btn btn-success btn-large print-no-print" onclick="window.print()">
+                    <ion-icon name="print"></ion-icon>
+                    <span>Cetak Struk Fiskal</span>
+                </button>
+                <button class="btn btn-outline print-no-print" id="close-receipt-btn" style="margin-top: 8px; width: 100%;">
+                    <span>Tutup Preview</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 3: Modal CRUD Produk Preview (Glassmorphic Slide-up) -->
+    <div class="modal-overlay" id="product-modal">
+        <div class="payment-modal" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3 id="preview-modal-title">Tambah Produk Baru</h3>
+                <button class="close-modal-btn" id="close-product-modal-btn">
+                    <ion-icon name="close-outline"></ion-icon>
+                </button>
+            </div>
+            
+            <div style="padding: 24px;">
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; font-size: 12px; font-weight: 700; color: var(--text-secondary); margin-bottom: 6px;">Nama Produk *</label>
+                    <input type="text" id="preview-prod-name" placeholder="Contoh: Nasi Goreng Spesial" style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: var(--radius-md); font-size: 14px; outline: none; background: white; color: var(--text-primary);">
+                </div>
+
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; font-size: 12px; font-weight: 700; color: var(--text-secondary); margin-bottom: 6px;">SKU / Kode Unik *</label>
+                    <input type="text" id="preview-prod-sku" placeholder="Contoh: MKN-NASGOR-001" style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: var(--radius-md); font-size: 14px; text-transform: uppercase; outline: none; background: white; color: var(--text-primary);">
+                </div>
+
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; font-size: 12px; font-weight: 700; color: var(--text-secondary); margin-bottom: 6px;">Kategori Produk *</label>
+                    <select id="preview-prod-category" style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: var(--radius-md); font-size: 14px; outline: none; background-color: white; color: var(--text-primary); cursor: pointer;">
+                        <option value="">-- Pilih Kategori --</option>
+                        <option value="minuman-segar">Minuman Segar</option>
+                        <option value="makanan-ringan-camilan">Makanan Ringan (Camilan)</option>
+                        <option value="makanan-instan">Makanan Instan</option>
+                        <option value="bahan-pokok-sembako">Bahan Pokok & Sembako</option>
+                        <option value="produk-olahan-susu-roti">Olahan Susu & Roti</option>
+                        <option value="perawatan-rambut-tubuh">Rambut & Tubuh</option>
+                        <option value="perawatan-wajah-kulit">Wajah & Kulit</option>
+                        <option value="kebutuhan-sanitasi">Sanitasi</option>
+                        <option value="wewangian">Wewangian</option>
+                        <option value="pencuci-pakaian">Pencuci Pakaian</option>
+                        <option value="pembersih-rumah">Pembersih Rumah</option>
+                        <option value="pengendali-hama">Pengendali Hama</option>
+                        <option value="kebutuhan-bayi">Kebutuhan Bayi</option>
+                        <option value="produk-kesehatan-ringan">Kesehatan</option>
+                        <option value="kebutuhan-imbuhan">Kebutuhan Imbuhan</option>
+                    </select>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+                    <div>
+                        <label style="display: block; font-size: 12px; font-weight: 700; color: var(--text-secondary); margin-bottom: 6px;">Harga Jual (Rp) *</label>
+                        <input type="number" id="preview-prod-price" min="0" placeholder="0" style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: var(--radius-md); font-size: 14px; outline: none; background: white; color: var(--text-primary);">
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 12px; font-weight: 700; color: var(--text-secondary); margin-bottom: 6px;">Stok Awal *</label>
+                        <input type="number" id="preview-prod-stock" min="0" placeholder="0" style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: var(--radius-md); font-size: 14px; outline: none; background: white; color: var(--text-primary);">
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 24px;">
+                    <label style="display: block; font-size: 12px; font-weight: 700; color: var(--text-secondary); margin-bottom: 6px;">Pilihan Ikon Menu *</label>
+                    <select id="preview-prod-icon" style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: var(--radius-md); font-size: 14px; outline: none; background-color: white; color: var(--text-primary); cursor: pointer;">
+                        <option value="beer-outline">🍺 Minuman Segar</option>
+                        <option value="pizza-outline">🍿 Makanan Ringan / Camilan</option>
+                        <option value="restaurant-outline">🍜 Makanan Instan</option>
+                        <option value="cube-outline">📦 Bahan Pokok & Sembako</option>
+                        <option value="nutrition-outline">🍞 Olahan Susu & Roti</option>
+                        <option value="body-outline">🧴 Perawatan Rambut & Tubuh</option>
+                        <option value="sparkles-outline">✨ Perawatan Wajah & Kulit</option>
+                        <option value="medkit-outline">🩺 Kebutuhan Sanitasi & Kesehatan</option>
+                        <option value="flower-outline">🌸 Wewangian</option>
+                        <option value="shirt-outline">👕 Pencuci Pakaian</option>
+                        <option value="brush-outline">🧹 Pembersih Rumah</option>
+                        <option value="bug-outline">🦟 Pengendali Hama</option>
+                        <option value="happy-outline">👶 Kebutuhan Bayi</option>
+                        <option value="flash-outline">⚡ Kebutuhan Imbuhan / Aksesori</option>
+                    </select>
+                </div>
+
+                <div class="modal-footer" style="padding: 16px 0 0; display: flex; justify-content: flex-end; gap: 12px;">
+                    <button type="button" class="btn btn-outline" id="close-product-modal-cancel">Batalkan</button>
+                    <button type="button" class="btn btn-success" id="preview-product-save-btn">Simpan Produk</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 4: Modal Sukses Ekspor Laporan -->
+    <div class="modal-overlay" id="export-success-modal">
+        <div class="payment-modal" style="max-width: 420px; text-align: center;">
+            <div style="padding: 32px 24px;">
+                <div style="font-size: 64px; color: var(--color-success); margin-bottom: 16px; display: flex; align-items: center; justify-content: center; animation: pulse 2s infinite;">
+                    <ion-icon name="checkmark-circle-outline"></ion-icon>
+                </div>
+                <h3 style="font-size: 18px; font-weight: 800; color: var(--text-primary); margin-bottom: 8px;">Ekspor Laporan Berhasil</h3>
+                <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 24px;">
+                    Berkas rekapitulasi transaksi penjualan Anda (format .xlsx/.pdf) sedang diunduh secara otomatis ke dalam folder Download perangkat Anda.
+                </p>
+                <button type="button" class="btn btn-success btn-large" id="close-export-modal-btn">
+                    <span>Tutup Pemberitahuan</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SPA Header update logic helper -->
+    <script>
+        // Update live header date
+        function updateLiveDate() {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const today = new Date();
+            document.getElementById('live-date').textContent = today.toLocaleDateString('id-ID', options);
+        }
+        updateLiveDate();
+        setInterval(updateLiveDate, 60000);
+
+        // Sidebar headers navigation sync
+        const viewMeta = {
+            dashboard: { title: 'Ringkasan Laporan', subtitle: 'Selamat datang kembali! Berikut ringkasan penjualan usaha Anda hari ini.' },
+            cashier: { title: 'Kasir Utama', subtitle: 'Kelola keranjang belanja dan transaksi penjualan langsung.' },
+            history: { title: 'Riwayat Transaksi', subtitle: 'Seluruh catatan transaksi penjualan yang berhasil diproses.' },
+            products: { title: 'Manajemen Produk', subtitle: 'Kelola data katalog produk, harga jual, dan stok persediaan.' }
+        };
+
+        const navs = [
+            { id: 'menu-dashboard', name: 'dashboard' },
+            { id: 'menu-cashier', name: 'cashier' },
+            { id: 'menu-transactions', name: 'history' },
+            { id: 'menu-products', name: 'products' }
+        ];
+
+        navs.forEach(nav => {
+            const el = document.getElementById(nav.id);
+            if (el) {
+                el.addEventListener('click', () => {
+                    const meta = viewMeta[nav.name];
+                    document.getElementById('header-view-title').textContent = meta.title;
+                    document.getElementById('header-view-subtitle').textContent = meta.subtitle;
+                });
+            }
+        });
+    </script>
+
+    <!-- MODAL 5: Modal Pemindai Barcode Kamera (Webcam Barcode Scanner) -->
+    <div class="modal-overlay" id="barcode-camera-modal">
+        <div class="payment-modal" style="max-width: 500px; text-align: center; border: 1px solid rgba(139, 92, 246, 0.4); box-shadow: 0 20px 50px rgba(139, 92, 246, 0.15);">
+            <div class="modal-header" style="border-bottom: 1px solid var(--border-color); padding: 16px 24px;">
+                <h3 style="font-size: 16px; font-weight: 800; display: flex; align-items: center; gap: 8px; color: var(--text-primary);">
+                    <ion-icon name="barcode-outline" style="color: var(--color-primary); font-size: 20px;"></ion-icon>
+                    Pemindai Barcode Kamera
+                </h3>
+                <button class="close-modal-btn" onclick="window.closeBarcodeCameraModal()">
+                    <ion-icon name="close-outline"></ion-icon>
+                </button>
+            </div>
+            <div style="padding: 24px; position: relative;">
+                <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 16px;">
+                    Arahkan barcode produk (di bagian belakang kemasan) ke dalam area kotak pemindaian di bawah ini.
+                </p>
+                
+                <!-- Frame kamera pemindai dengan penyorot neon -->
+                <div class="barcode-scanner-viewport" style="position: relative; width: 100%; aspect-ratio: 4/3; background: #0b0f19; border-radius: 12px; overflow: hidden; border: 1px solid var(--border-color);">
+                    <!-- Kotak Bidik Scanner (Target Area Overlay) -->
+                    <div class="scanner-laser-line"></div>
+                    <div class="scanner-bracket top-left"></div>
+                    <div class="scanner-bracket top-right"></div>
+                    <div class="scanner-bracket bottom-left"></div>
+                    <div class="scanner-bracket bottom-right"></div>
+                    
+                    <div id="barcode-scanner-reader" style="width: 100%; height: 100%;"></div>
+                </div>
+                
+                <div style="margin-top: 20px; display: flex; justify-content: center;">
+                    <button type="button" class="btn btn-danger btn-outline btn-large" onclick="window.closeBarcodeCameraModal()" style="padding: 10px 24px;">
+                        <span>Batalkan Pemindaian</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load Html5-QRCode library via CDN -->
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+
+    <!-- Load main reactive script -->
+    <script type="module" src="./resources/js/pos-preview.js"></script>
+</body>
+</html>
