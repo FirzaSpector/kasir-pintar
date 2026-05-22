@@ -1,72 +1,92 @@
-<en>
+<div align="center">
+  <h1>🛒 Kasir Pintar (Smart Cashier)</h1>
+  <p><strong>A Modern, Fast, and Reliable Point-of-Sale (POS) System built with Laravel & Alpine.js</strong></p>
+</div>
 
-Project Summary
+---
 
-Name & Summary: Smart Cashier — a Laravel-based Point-of-Sale (POS) system for product, inventory, and cashier transaction management.
-Tech Stack
+<p align="center">
+  <img src="https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white" alt="Laravel"/>
+  <img src="https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white" alt="PHP"/>
+  <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS"/>
+  <img src="https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E" alt="Vite"/>
+  <img src="https://img.shields.io/badge/Alpine.js-8BC0D0?style=for-the-badge&logo=alpine.js&logoColor=white" alt="Alpine.js"/>
+</p>
 
-Backend: PHP 8.2, laravel/framework ^11.0 (see composer.json).
-Frontend / Build: Vite, Tailwind CSS, Alpine.js, Axios (see package.json).
-Testing & Dev: phpunit, laravel/breeze, laravel/tinker.
-DB: Relational DB (usually MySQL/Postgres) via Eloquent.
-Core Features
+## 📖 English / [Bahasa Indonesia](#-bahasa-indonesia)
 
-Product & Category Management: CRUD for products, categories, price attributes, and stock (Product.php).
-POS / Checkout: Cart, stock validation, subtotal/total calculations, payment and change checks, stock deductions at checkout (TransactionService.php).
-Transactions & Invoices: Unique invoice number generation (generateInvoiceNumber()), transaction and detail storage.
-Modular Architecture: Repository + Service layer for separating business logic (Repositories, Services).
-Auth & Role: Structure for authentication and roles (Auth folder, Role.php).
-Interactive Frontend: Fast UI for POS using Tailwind + Alpine + Vite, and API communication via Axios.
+### 🚀 Overview
+**Kasir Pintar** (Smart Cashier) is a robust and modular POS system designed to streamline product management, inventory tracking, and checkout processes. Built with a solid repository-service architecture, it ensures clean business logic separation, making it highly maintainable and scalable.
 
-Architecture & Notable Patterns
-MVC (Laravel): Controllers → Models → Views.
-Repository Pattern: Data access is separated through an interface/repository for testability.
-Service Layer: Transaction logic and business processes are placed in services (atomic DB transactions, rollback on error).
-Example files: TransactionService.php, Product.php.
+### 🛠 Tech Stack
+- **Backend**: PHP 8.2, Laravel 11.x
+- **Frontend**: Vite, Tailwind CSS, Alpine.js, Axios
+- **Testing**: PHPUnit, Laravel Breeze for scaffolding
+- **Database**: Relational Database (MySQL/PostgreSQL) via Eloquent ORM
 
-Quick Setup (development)
+### ✨ Core Features
+- 📦 **Product & Category Management**: Seamless CRUD operations for products, categories, dynamic pricing, and stock monitoring.
+- 💳 **POS Checkout System**: Real-time cart management, stock validation, auto-calculations (subtotal/total/change), and dynamic stock deductions.
+- 🧾 **Transactions & Invoicing**: Automated unique invoice generation with robust transaction data tracking.
+- 🏗 **Modular Architecture**: Uses **Repository Pattern** for data access and **Service Layer** for complex business logic (e.g., atomic DB transactions, rollback mechanisms).
+- 🔐 **Auth & Roles**: Secure authentication system with role-based access control.
 
-Run:
+### 💻 Quick Setup
+To run this project locally:
+
+```bash
+# 1. Install Dependencies
 composer install
+npm install
+
+# 2. Environment Setup
 cp .env.example .env
 php artisan key:generate
+
+# 3. Database Setup (Ensure your DB is created and configured in .env)
 php artisan migrate --seed
-npm install
+
+# 4. Run Development Servers
 npm run dev
 php artisan serve
-<id>
+```
 
-Project Summary
+---
 
-Nama & Ringkas: Kasir Pintar — sistem Point-of-Sale (POS) berbasis Laravel untuk manajemen produk, stok, dan transaksi kasir.
-Tech Stack
+## 🇮🇩 Bahasa Indonesia
 
-Backend: PHP 8.2, laravel/framework ^11.0 (lihat composer.json).
-Frontend / Build: Vite, Tailwind CSS, Alpine.js, Axios (lihat package.json).
-Testing & Dev: phpunit, laravel/breeze, laravel/tinker.
-DB: Relational DB (umumnya MySQL/Postgres) via Eloquent.
-Core Features
+### 🚀 Gambaran Umum
+**Kasir Pintar** adalah sistem Point-of-Sale (POS) yang tangguh dan modular, dirancang untuk mempermudah manajemen produk, pelacakan inventaris, dan proses checkout (kasir). Dibangun dengan arsitektur *repository-service* yang solid untuk memisahkan logika bisnis, sehingga mudah dikelola dan dikembangkan.
 
-Manajemen Produk & Kategori: CRUD produk, kategori, atribut harga & stok (Product.php).
-POS / Checkout: Keranjang, validasi stok, perhitungan subtotal/total, cek pembayaran dan kembalian, pengurangan stok saat checkout (TransactionService.php).
-Transaksi & Invoice: Pembuatan nomor invoice unik (generateInvoiceNumber()), penyimpanan transaksi + detail.
-Arsitektur Modular: Repository + Service layer untuk pemisahan logika bisnis (Repositories, Services).
-Auth & Role: Struktur untuk otentikasi dan role (folder Auth, Role.php).
-Frontend interaktif: UI cepat untuk POS menggunakan Tailwind + Alpine + Vite, dan komunikasi API via Axios.
+### 🛠 Teknologi yang Digunakan
+- **Backend**: PHP 8.2, Laravel 11.x
+- **Frontend**: Vite, Tailwind CSS, Alpine.js, Axios
+- **Testing**: PHPUnit, Laravel Breeze
+- **Database**: Relational Database (MySQL/PostgreSQL) melalui Eloquent ORM
 
-Architecture & Notable Patterns
-MVC (Laravel): Controllers → Models → Views.
-Repository Pattern: Akses data dipisah lewat interface/repository untuk testabilitas.
-Service Layer: Logika transaksi dan proses bisnis ditempatkan di service (atomic DB transaction, rollback on error).
-Contoh file: TransactionService.php, Product.php.
+### ✨ Fitur Utama
+- 📦 **Manajemen Produk & Kategori**: Operasi CRUD untuk produk, kategori, harga dinamis, dan pemantauan stok.
+- 💳 **Sistem Checkout POS**: Manajemen keranjang *real-time*, validasi stok, perhitungan otomatis (subtotal/total/kembalian), dan pengurangan stok otomatis.
+- 🧾 **Transaksi & Invoice**: Pembuatan nomor invoice unik secara otomatis beserta riwayat transaksi yang detail.
+- 🏗 **Arsitektur Modular**: Menggunakan **Repository Pattern** untuk akses data dan **Service Layer** untuk logika bisnis (seperti *atomic DB transactions* dan *rollback*).
+- 🔐 **Autentikasi & Hak Akses**: Sistem login aman dilengkapi kontrol akses berbasis peran (Role).
 
-Quick Setup (development)
+### 💻 Panduan Instalasi
+Untuk menjalankan proyek ini di lingkungan lokal Anda:
 
-Jalankan:
+```bash
+# 1. Install Dependencies
 composer install
+npm install
+
+# 2. Pengaturan Environment
 cp .env.example .env
 php artisan key:generate
+
+# 3. Pengaturan Database (Pastikan DB sudah dibuat dan di-set di .env)
 php artisan migrate --seed
-npm install
+
+# 4. Jalankan Server Development
 npm run dev
 php artisan serve
+```
